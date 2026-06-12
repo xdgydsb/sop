@@ -1,0 +1,21 @@
+# SOP System ROI Configuration
+#
+# All ROIs are in pixel coordinates: [x1, y1, x2, y2]
+# Use tools/calibrate_rois.py to calibrate these values.
+#
+# box_roi: The fixed region where the box sits. box_open/box_closed detections
+#          outside this ROI are rejected as false positives.
+# box_inner_roi: Shrunken version of box_roi (inset ~15% from each edge).
+#                Object center must be inside this ROI to count as "in box".
+# *_init_roi: The initial position of each object before placement.
+#             Object must be seen here before it can trigger as "placed".
+
+box_roi: [300, 150, 950, 650]
+
+box_inner_roi: [380, 200, 870, 600]
+
+earphone_init_roi: [100, 200, 350, 450]
+
+charger_init_roi: [600, 100, 900, 350]
+
+green_bag_init_roi: [50, 400, 300, 650]

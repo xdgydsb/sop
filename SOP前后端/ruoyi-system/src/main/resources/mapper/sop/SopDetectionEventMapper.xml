@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.sop.SopDetectionEventMapper">
+
+    <resultMap type="com.ruoyi.system.domain.sop.SopDetectionEvent" id="SopDetectionEventResult">
+        <id     property="eventLogId"  column="event_log_id"  />
+        <result property="requestId"   column="request_id"    />
+        <result property="taskId"      column="task_id"       />
+        <result property="taskCode"    column="task_code"     />
+        <result property="productCode" column="product_code"  />
+        <result property="stationCode" column="station_code"  />
+        <result property="cameraCode"  column="camera_code"   />
+        <result property="eventId"     column="event_id"      />
+        <result property="eventCode"   column="event_code"    />
+        <result property="eventName"   column="event_name"    />
+        <result property="confidence"  column="confidence"    />
+        <result property="eventTime"   column="event_time"    />
+        <result property="receiveTime" column="receive_time"  />
+        <result property="imageUrl"    column="image_url"     />
+        <result property="rawPayload"  column="raw_payload"   />
+        <result property="judgeResult" column="judge_result"  />
+        <result property="judgeMessage" column="judge_message" />
+        <result property="stepId"      column="step_id"       />
+        <result property="stepNo"      column="step_no"       />
+        <result property="createBy"    column="create_by"     />
+        <result property="createTime"  column="create_time"   />
+        <result property="updateBy"    column="update_by"     />
+        <result property="updateTime"  column="update_time"   />
+        <result property="remark"      column="remark"        />
+    </resultMap>
+
+    <sql id="selectSopDetectionEventVo">
+        select event_log_id, request_id, task_id, task_code, product_code, station_code, camera_code,
+               event_id, event_code, event_name, confidence, event_time, receive_time, image_url,
+               raw_payload, judge_result, judge_message, step_id, step_no, create_by, create_time,
+               update_by, update_time, remark
+        from sop_detection_event
+    </sql>
+
+    <select id="selectSopDetectionEventList" parameterType="com.ruoyi.system.domain.sop.SopDetectionEvent" resultMap="SopDetectionEventResult">
+        <include refid="selectSopDetectionEventVo"/>
+        <where>
+            <if test="requestId != null and requestId != ''">and request_id like concat('%', #{requestId}, '%')</if>
+            <if test="taskId != null">and task_id = #{taskId}</if>
+            <if test="taskCode != null and taskCode != ''">and task_code like concat('%', #{taskCode}, '%')</if>
+            <if test="productCode != null and productCode != ''">and product_code like concat('%', #{productCode}, '%')</if>
+            <if test="stationCode != null and stationCode != ''">and station_code like concat('%', #{stationCode}, '%')</if>
+            <if test="cameraCode != null and cameraCode != ''">and camera_code like concat('%', #{cameraCode}, '%')</if>
+            <if test="eventId != null and eventId != ''">and event_id like concat('%', #{eventId}, '%')</if>
+            <if test="eventCode != null and eventCode != ''">and event_code like concat('%', #{eventCode}, '%')</if>
+            <if test="eventName != null and eventName != ''">and event_name like concat('%', #{eventName}, '%')</if>
+            <if test="judgeResult != null and judgeResult != ''">and judge_result = #{judgeResult}</if>
+            <if test="stepNo != null">and step_no = #{stepNo}</if>
+        </where>
+        order by event_log_id desc
+    </select>
+
+    <select id="selectSopDetectionEventByEventLogId" parameterType="Long" resultMap="SopDetectionEventResult">
+        <include refid="selectSopDetectionEventVo"/>
+        where event_log_id = #{eventLogId}
+    </select>
+
+    <insert id="insertSopDetectionEvent" parameterType="com.ruoyi.system.domain.sop.SopDetectionEvent" useGeneratedKeys="true" keyProperty="eventLogId">
+        insert into sop_detection_event
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="requestId != null">request_id,</if>
+            <if test="taskId != null">task_id,</if>
+            <if test="taskCode != null and taskCode != ''">task_code,</if>
+            <if test="productCode != null">product_code,</if>
+            <if test="stationCode != null">station_code,</if>
+            <if test="cameraCode != null">camera_code,</if>
+            <if test="eventId != null">event_id,</if>
+            <if test="eventCode != null and eventCode != ''">event_code,</if>
+            <if test="eventName != null">event_name,</if>
+            <if test="confidence != null">confidence,</if>
+            <if test="eventTime != null">event_time,</if>
+            <if test="receiveTime != null">receive_time,</if>
+            <if test="imageUrl != null">image_url,</if>
+            <if test="rawPayload != null">raw_payload,</if>
+            <if test="judgeResult != null">judge_result,</if>
+            <if test="judgeMessage != null">judge_message,</if>
+            <if test="stepId != null">step_id,</if>
+            <if test="stepNo != null">step_no,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null and createBy != ''">create_by,</if>
+            create_time,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="requestId != null">#{requestId},</if>
+            <if test="taskId != null">#{taskId},</if>
+            <if test="taskCode != null and taskCode != ''">#{taskCode},</if>
+            <if test="productCode != null">#{productCode},</if>
+            <if test="stationCode != null">#{stationCode},</if>
+            <if test="cameraCode != null">#{cameraCode},</if>
+            <if test="eventId != null">#{eventId},</if>
+            <if test="eventCode != null and eventCode != ''">#{eventCode},</if>
+            <if test="eventName != null">#{eventName},</if>
+            <if test="confidence != null">#{confidence},</if>
+            <if test="eventTime != null">#{eventTime},</if>
+            <if test="receiveTime != null">#{receiveTime},</if>
+            <if test="imageUrl != null">#{imageUrl},</if>
+            <if test="rawPayload != null">#{rawPayload},</if>
+            <if test="judgeResult != null">#{judgeResult},</if>
+            <if test="judgeMessage != null">#{judgeMessage},</if>
+            <if test="stepId != null">#{stepId},</if>
+            <if test="stepNo != null">#{stepNo},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null and createBy != ''">#{createBy},</if>
+            sysdate(),
+        </trim>
+    </insert>
+
+    <update id="updateSopDetectionEvent" parameterType="com.ruoyi.system.domain.sop.SopDetectionEvent">
+        update sop_detection_event
+        <set>
+            <if test="requestId != null">request_id = #{requestId},</if>
+            <if test="taskId != null">task_id = #{taskId},</if>
+            <if test="taskCode != null and taskCode != ''">task_code = #{taskCode},</if>
+            <if test="productCode != null">product_code = #{productCode},</if>
+            <if test="stationCode != null">station_code = #{stationCode},</if>
+            <if test="cameraCode != null">camera_code = #{cameraCode},</if>
+            <if test="eventId != null">event_id = #{eventId},</if>
+            <if test="eventCode != null and eventCode != ''">event_code = #{eventCode},</if>
+            <if test="eventName != null">event_name = #{eventName},</if>
+            <if test="confidence != null">confidence = #{confidence},</if>
+            <if test="eventTime != null">event_time = #{eventTime},</if>
+            <if test="receiveTime != null">receive_time = #{receiveTime},</if>
+            <if test="imageUrl != null">image_url = #{imageUrl},</if>
+            <if test="rawPayload != null">raw_payload = #{rawPayload},</if>
+            <if test="judgeResult != null">judge_result = #{judgeResult},</if>
+            <if test="judgeMessage != null">judge_message = #{judgeMessage},</if>
+            <if test="stepId != null">step_id = #{stepId},</if>
+            <if test="stepNo != null">step_no = #{stepNo},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            update_time = sysdate()
+        </set>
+        where event_log_id = #{eventLogId}
+    </update>
+
+    <delete id="deleteSopDetectionEventByEventLogId" parameterType="Long">
+        delete from sop_detection_event where event_log_id = #{eventLogId}
+    </delete>
+
+    <delete id="deleteSopDetectionEventByEventLogIds" parameterType="Long">
+        delete from sop_detection_event where event_log_id in
+        <foreach collection="array" item="eventLogId" open="(" separator="," close=")">
+            #{eventLogId}
+        </foreach>
+    </delete>
+</mapper>

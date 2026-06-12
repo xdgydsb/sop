@@ -1,0 +1,33 @@
+# SOP 实时动作检测系统 — 依赖
+# Python 3.9+
+#
+# 安装:
+#   pip install -r requirements.txt
+#
+# GPU 用户: pip 会自动安装 CUDA 版 torch。
+# 如需指定 CUDA 版本:
+#   pip install torch torchvision --index-url https://download.pytorch.org/whl/cu118
+
+# 深度学习
+torch>=2.0.0
+torchvision>=0.15.0
+ultralytics>=8.0.200
+
+# 计算机视觉
+opencv-python>=4.8.0
+mediapipe>=0.10.30
+Pillow>=9.0.0
+scipy>=1.10.0
+
+# 数据处理
+numpy>=1.24.0
+pandas>=2.0.0
+scikit-learn>=1.3.0
+
+# WebSocket (server mode)
+websockets>=11.0
+
+# 工具
+pyyaml>=6.0
+tqdm>=4.65.0
+matplotlib>=3.7.0

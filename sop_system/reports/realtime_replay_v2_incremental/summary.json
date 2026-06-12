@@ -1,0 +1,97 @@
+{
+  "test_date": "2026-05-20",
+  "method": "方案B — TemporalPredictorV2 增量流式推理 (修复版)",
+  "model": "v2_90 TCN+BiGRU (904K params)",
+  "model_path": "/home/zhaowei/shabi/520/models/temporal/v2_90_tcn_bigru/checkpoints/best.pt",
+  "feature_dim": 90,
+  "window_T": 48,
+  "stride": 4,
+  "fps": 15.0,
+
+  "fixes_applied": {
+    "bug1_window_scheduling": {
+      "old": "_last_infer_end = end",
+      "new": "_last_infer_end = start + self.stride",
+      "effect": "窗口从 stride=48 跳回正确的 stride=4，成熟帧从5-11个恢复到248-512个"
+    },
+    "bug2_fallback": {
+      "old": "未覆盖帧 fallback 到未来帧的概率",
+      "new": "未覆盖帧返回 None，FSM 不消费",
+      "effect": "消除假预测导致的 FSM MISSING_STEP"
+    }
+  },
+
+  "acceptance_criteria": {
+    "ok_pass_rate_target": "≥ 95%",
+    "wr_detection_rate_target": "≥ 95%",
+    "none_consumed_by_fsm": "必须为 0"
+  },
+
+  "results_20_ok": {
+    "total": 20,
+    "pass": 19,
+    "fail": 1,
+    "pass_rate": 0.95,
+    "failed_videos": ["ok_14"],
+    "failure_analysis": {
+      "ok_14": {
+        "fsm_path": [1, 7, 1, 2, 3, 4, 5, 6],
+        "error_type": "MISSING_STEP",
+        "root_cause": "模型在 feat=95 (frame=159) 短暂预测 S4 (conf=0.631)，S1 仍有 0.356",
+        "top3_at_error": [[4, 0.6311], [1, 0.3558], [2, 0.005]],
+        "recovery": "FSM 在 feat=103 自动恢复到 S1，随后正确完成 1→2→3→4→5→6",
+        "note": "模型级 S3/S4 边界混淆（已知局限，离线2.8%），非调度bug"
+      }
+    }
+  },
+
+  "results_20_wr": {
+    "total": 20,
+    "detected": 20,
+    "missed": 0,
+    "detection_rate": 1.0,
+    "common_pattern": "大多数 WR 视频的 FSM 路径为 [1,7,3,7,2,7,4,5,6] — S2被跳过然后乱序出现。部分为 [1,2,7,4,7,3,4,5,6] — S3被跳过然后乱序。"
+  },
+
+  "results_5_yuanzi": {
+    "total": 5,
+    "processed": 5,
+    "note": "yuanzi 为非标准测试视频，模型正确识别动作但 FSM 检测为异常（符合预期）"
+  },
+
+  "none_prediction_stats": {
+    "per_video_buffering_none": 47,
+    "total_none_predictions": 2115,
+    "total_none_consumed_by_fsm": 0,
+    "status": "✓ PASS — FSM 从未消费 None 预测"
+  },
+
+  "first_mature_frame": {
+    "expected": 12,
+    "actual_all_videos": 12,
+    "status": "✓ PASS — 所有视频 first_mature_frame=12"
+  },
+
+  "comparison_with_previous": {
+    "old_buggy_75pct": {
+      "ok_pass_rate": 0.75,
+      "failure_pattern": "5个视频跳过 S2/S3",
+      "root_cause": "窗口调度 bug + fallback bug"
+    },
+    "fixed_95pct": {
+      "ok_pass_rate": 0.95,
+      "failure_pattern": "1个视频模型短暂混淆 S4",
+      "root_cause": "模型级边界混淆（已知局限）"
+    },
+    "improvement": "+20% OK 通过率，从 75%→95%"
+  },
+
+  "acceptance_verdict": {
+    "ok_95pct": "✓ PASS",
+    "wr_95pct": "✓ PASS",
+    "none_consumed_zero": "✓ PASS",
+    "overall": "✓ ACCEPTED — 增量实时推理链路可用"
+  },
+
+  "next_step": "全量回放测试: 181 OK + 64 WR → reports/realtime_replay_v2_incremental_full/"
+}

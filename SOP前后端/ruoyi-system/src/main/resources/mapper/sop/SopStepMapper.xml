@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.sop.SopStepMapper">
+
+    <resultMap type="com.ruoyi.system.domain.sop.SopStep" id="SopStepResult">
+        <id     property="stepId"             column="step_id"             />
+        <result property="sopId"              column="sop_id"              />
+        <result property="sopName"            column="sop_name"            />
+        <result property="stepNo"             column="step_no"             />
+        <result property="stepName"           column="step_name"           />
+        <result property="expectedEvent"      column="expected_event"      />
+        <result property="requiredConfidence" column="required_confidence" />
+        <result property="standardDuration"   column="standard_duration"   />
+        <result property="status"             column="status"              />
+        <result property="createBy"           column="create_by"           />
+        <result property="createTime"         column="create_time"         />
+        <result property="updateBy"           column="update_by"           />
+        <result property="updateTime"         column="update_time"         />
+        <result property="remark"             column="remark"              />
+    </resultMap>
+
+    <sql id="selectSopStepVo">
+        select s.step_id, s.sop_id, p.sop_name, s.step_no, s.step_name, s.expected_event,
+               s.required_confidence, s.standard_duration, s.status, s.create_by, s.create_time,
+               s.update_by, s.update_time, s.remark
+        from sop_step s
+        left join sop_process p on p.sop_id = s.sop_id
+    </sql>
+
+    <select id="selectSopStepList" parameterType="com.ruoyi.system.domain.sop.SopStep" resultMap="SopStepResult">
+        <include refid="selectSopStepVo"/>
+        <where>
+            <if test="sopId != null">and s.sop_id = #{sopId}</if>
+            <if test="sopName != null and sopName != ''">and p.sop_name like concat('%', #{sopName}, '%')</if>
+            <if test="stepNo != null">and s.step_no = #{stepNo}</if>
+            <if test="stepName != null and stepName != ''">and s.step_name like concat('%', #{stepName}, '%')</if>
+            <if test="expectedEvent != null and expectedEvent != ''">and s.expected_event like concat('%', #{expectedEvent}, '%')</if>
+            <if test="status != null and status != ''">and s.status = #{status}</if>
+        </where>
+        order by s.sop_id asc, s.step_no asc
+    </select>
+
+    <select id="selectSopStepByStepId" parameterType="Long" resultMap="SopStepResult">
+        <include refid="selectSopStepVo"/>
+        where s.step_id = #{stepId}
+    </select>
+
+    <insert id="insertSopStep" parameterType="com.ruoyi.system.domain.sop.SopStep" useGeneratedKeys="true" keyProperty="stepId">
+        insert into sop_step
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="sopId != null">sop_id,</if>
+            <if test="stepNo != null">step_no,</if>
+            <if test="stepName != null and stepName != ''">step_name,</if>
+            <if test="expectedEvent != null and expectedEvent != ''">expected_event,</if>
+            <if test="requiredConfidence != null">required_confidence,</if>
+            <if test="standardDuration != null">standard_duration,</if>
+            <if test="status != null and status != ''">status,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null and createBy != ''">create_by,</if>
+            create_time,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="sopId != null">#{sopId},</if>
+            <if test="stepNo != null">#{stepNo},</if>
+            <if test="stepName != null and stepName != ''">#{stepName},</if>
+            <if test="expectedEvent != null and expectedEvent != ''">#{expectedEvent},</if>
+            <if test="requiredConfidence != null">#{requiredConfidence},</if>
+            <if test="standardDuration != null">#{standardDuration},</if>
+            <if test="status != null and status != ''">#{status},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null and createBy != ''">#{createBy},</if>
+            sysdate(),
+        </trim>
+    </insert>
+
+    <update id="updateSopStep" parameterType="com.ruoyi.system.domain.sop.SopStep">
+        update sop_step
+        <set>
+            <if test="sopId != null">sop_id = #{sopId},</if>
+            <if test="stepNo != null">step_no = #{stepNo},</if>
+            <if test="stepName != null and stepName != ''">step_name = #{stepName},</if>
+            <if test="expectedEvent != null and expectedEvent != ''">expected_event = #{expectedEvent},</if>
+            <if test="requiredConfidence != null">required_confidence = #{requiredConfidence},</if>
+            <if test="standardDuration != null">standard_duration = #{standardDuration},</if>
+            <if test="status != null and status != ''">status = #{status},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            update_time = sysdate()
+        </set>
+        where step_id = #{stepId}
+    </update>
+
+    <delete id="deleteSopStepByStepId" parameterType="Long">
+        delete from sop_step where step_id = #{stepId}
+    </delete>
+
+    <delete id="deleteSopStepByStepIds" parameterType="Long">
+        delete from sop_step where step_id in
+        <foreach collection="array" item="stepId" open="(" separator="," close=")">
+            #{stepId}
+        </foreach>
+    </delete>
+</mapper>

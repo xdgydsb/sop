@@ -1,0 +1,5 @@
+path: D:\laji\sop_system\yolo_manual_v1
+train: train/images
+val: val/images
+nc: 5
+names: ['box_closed', 'box_open', 'earphone', 'charger', 'green_bag']

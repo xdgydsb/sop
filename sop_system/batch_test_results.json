@@ -1,0 +1,66 @@
+[
+  {
+    "name": "ok_20",
+    "category": "ok",
+    "total_frames": 567,
+    "processed_frames": 102,
+    "fps": 25.044168,
+    "elapsed": 8.250048875808716,
+    "final_step": 1,
+    "final_is_error": false,
+    "fsm_path": [
+      4,
+      4,
+      0
+    ],
+    "fsm_errors": [
+      {
+        "frame": 12,
+        "step": 7,
+        "detected_step": 5,
+        "model_step": 0,
+        "model_conf": 0.0,
+        "box_state": "closed",
+        "phys_step": 0,
+        "objects_placed": [],
+        "is_correct": false,
+        "error_type": "MISSING_STEP",
+        "message": "漏步! 从等待开始跳到5.关闭纸盒, 遗漏: ['1.打开纸盒', '2.放入耳机盒', '3.放入插头', '4.放入绿袋']"
+      },
+      {
+        "frame": 32,
+        "step": 7,
+        "detected_step": 0,
+        "model_step": 1,
+        "model_conf": 0.3428898751735687,
+        "box_state": "unknown",
+        "phys_step": 0,
+        "objects_placed": [],
+        "is_correct": false,
+        "error_type": "WRONG_ORDER",
+        "message": "乱序! 检测到等待开始, 但当前已在5.关闭纸盒"
+      },
+      {
+        "frame": 88,
+        "step": 7,
+        "detected_step": 0,
+        "model_step": 1,
+        "model_conf": 0.7516165971755981,
+        "box_state": "open",
+        "phys_step": 0,
+        "objects_placed": [],
+        "is_correct": false,
+        "error_type": "WRONG_ORDER",
+        "message": "乱序! 检测到等待开始, 但当前已在5.关闭纸盒"
+      }
+    ],
+    "verdict": "FAIL",
+    "last_box_state": "open",
+    "last_objects_placed": [],
+    "last_placement_stages": {
+      "earphone": "APPROACHING",
+      "charger": "APPROACHING",
+      "green_bag": "IDLE"
+    }
+  }
+]

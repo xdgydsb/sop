@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.sop.SopTaskStepMapper">
+
+    <resultMap type="com.ruoyi.system.domain.sop.SopTaskStep" id="SopTaskStepResult">
+        <id     property="taskStepId"        column="task_step_id"       />
+        <result property="taskId"            column="task_id"            />
+        <result property="stepId"            column="step_id"            />
+        <result property="stepNo"            column="step_no"            />
+        <result property="stepName"          column="step_name"          />
+        <result property="expectedEvent"     column="expected_event"     />
+        <result property="requiredConfidence" column="required_confidence" />
+        <result property="stepStatus"        column="step_status"        />
+        <result property="passTime"          column="pass_time"          />
+        <result property="eventLogId"        column="event_log_id"       />
+        <result property="snapshotUrl"       column="snapshot_url"       />
+        <result property="clipUrl"           column="clip_url"           />
+        <result property="clipStartMs"       column="clip_start_ms"      />
+        <result property="clipEndMs"         column="clip_end_ms"        />
+        <result property="judgeResult"       column="judge_result"       />
+        <result property="judgeMessage"      column="judge_message"      />
+        <result property="createBy"          column="create_by"          />
+        <result property="createTime"        column="create_time"        />
+        <result property="updateBy"          column="update_by"          />
+        <result property="updateTime"        column="update_time"        />
+        <result property="remark"            column="remark"             />
+    </resultMap>
+
+    <sql id="selectSopTaskStepVo">
+        select task_step_id, task_id, step_id, step_no, step_name, expected_event, required_confidence,
+               step_status, pass_time, event_log_id, snapshot_url, clip_url, clip_start_ms, clip_end_ms,
+               judge_result, judge_message, create_by, create_time, update_by, update_time, remark
+        from sop_task_step
+    </sql>
+
+    <select id="selectSopTaskStepList" parameterType="com.ruoyi.system.domain.sop.SopTaskStep" resultMap="SopTaskStepResult">
+        <include refid="selectSopTaskStepVo"/>
+        <where>
+            <if test="taskId != null">and task_id = #{taskId}</if>
+            <if test="stepId != null">and step_id = #{stepId}</if>
+            <if test="stepNo != null">and step_no = #{stepNo}</if>
+            <if test="stepName != null and stepName != ''">and step_name like concat('%', #{stepName}, '%')</if>
+            <if test="expectedEvent != null and expectedEvent != ''">and expected_event like concat('%', #{expectedEvent}, '%')</if>
+            <if test="stepStatus != null and stepStatus != ''">and step_status = #{stepStatus}</if>
+        </where>
+        order by task_id asc, step_no asc
+    </select>
+
+    <select id="selectSopTaskStepByTaskStepId" parameterType="Long" resultMap="SopTaskStepResult">
+        <include refid="selectSopTaskStepVo"/>
+        where task_step_id = #{taskStepId}
+    </select>
+
+    <insert id="insertSopTaskStep" parameterType="com.ruoyi.system.domain.sop.SopTaskStep" useGeneratedKeys="true" keyProperty="taskStepId">
+        insert into sop_task_step
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="taskId != null">task_id,</if>
+            <if test="stepId != null">step_id,</if>
+            <if test="stepNo != null">step_no,</if>
+            <if test="stepName != null and stepName != ''">step_name,</if>
+            <if test="expectedEvent != null and expectedEvent != ''">expected_event,</if>
+            <if test="requiredConfidence != null">required_confidence,</if>
+            <if test="stepStatus != null and stepStatus != ''">step_status,</if>
+            <if test="passTime != null">pass_time,</if>
+            <if test="eventLogId != null">event_log_id,</if>
+            <if test="snapshotUrl != null">snapshot_url,</if>
+            <if test="clipUrl != null">clip_url,</if>
+            <if test="clipStartMs != null">clip_start_ms,</if>
+            <if test="clipEndMs != null">clip_end_ms,</if>
+            <if test="judgeResult != null">judge_result,</if>
+            <if test="judgeMessage != null">judge_message,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null and createBy != ''">create_by,</if>
+            create_time,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="taskId != null">#{taskId},</if>
+            <if test="stepId != null">#{stepId},</if>
+            <if test="stepNo != null">#{stepNo},</if>
+            <if test="stepName != null and stepName != ''">#{stepName},</if>
+            <if test="expectedEvent != null and expectedEvent != ''">#{expectedEvent},</if>
+            <if test="requiredConfidence != null">#{requiredConfidence},</if>
+            <if test="stepStatus != null and stepStatus != ''">#{stepStatus},</if>
+            <if test="passTime != null">#{passTime},</if>
+            <if test="eventLogId != null">#{eventLogId},</if>
+            <if test="snapshotUrl != null">#{snapshotUrl},</if>
+            <if test="clipUrl != null">#{clipUrl},</if>
+            <if test="clipStartMs != null">#{clipStartMs},</if>
+            <if test="clipEndMs != null">#{clipEndMs},</if>
+            <if test="judgeResult != null">#{judgeResult},</if>
+            <if test="judgeMessage != null">#{judgeMessage},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null and createBy != ''">#{createBy},</if>
+            sysdate(),
+        </trim>
+    </insert>
+
+    <update id="updateSopTaskStep" parameterType="com.ruoyi.system.domain.sop.SopTaskStep">
+        update sop_task_step
+        <set>
+            <if test="taskId != null">task_id = #{taskId},</if>
+            <if test="stepId != null">step_id = #{stepId},</if>
+            <if test="stepNo != null">step_no = #{stepNo},</if>
+            <if test="stepName != null and stepName != ''">step_name = #{stepName},</if>
+            <if test="expectedEvent != null and expectedEvent != ''">expected_event = #{expectedEvent},</if>
+            <if test="requiredConfidence != null">required_confidence = #{requiredConfidence},</if>
+            <if test="stepStatus != null and stepStatus != ''">step_status = #{stepStatus},</if>
+            <if test="passTime != null">pass_time = #{passTime},</if>
+            <if test="eventLogId != null">event_log_id = #{eventLogId},</if>
+            <if test="snapshotUrl != null">snapshot_url = #{snapshotUrl},</if>
+            <if test="clipUrl != null">clip_url = #{clipUrl},</if>
+            <if test="clipStartMs != null">clip_start_ms = #{clipStartMs},</if>
+            <if test="clipEndMs != null">clip_end_ms = #{clipEndMs},</if>
+            <if test="judgeResult != null">judge_result = #{judgeResult},</if>
+            <if test="judgeMessage != null">judge_message = #{judgeMessage},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            update_time = sysdate()
+        </set>
+        where task_step_id = #{taskStepId}
+    </update>
+
+    <delete id="deleteSopTaskStepByTaskStepId" parameterType="Long">
+        delete from sop_task_step where task_step_id = #{taskStepId}
+    </delete>
+
+    <delete id="deleteSopTaskStepByTaskStepIds" parameterType="Long">
+        delete from sop_task_step where task_step_id in
+        <foreach collection="array" item="taskStepId" open="(" separator="," close=")">
+            #{taskStepId}
+        </foreach>
+    </delete>
+</mapper>

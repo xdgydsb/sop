@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.sop.SopAlarmRecordMapper">
+
+    <resultMap type="com.ruoyi.system.domain.sop.SopAlarmRecord" id="SopAlarmRecordResult">
+        <id     property="alarmId"      column="alarm_id"      />
+        <result property="alarmCode"    column="alarm_code"    />
+        <result property="taskId"       column="task_id"       />
+        <result property="taskCode"     column="task_code"     />
+        <result property="productCode"  column="product_code"  />
+        <result property="stationCode"  column="station_code"  />
+        <result property="cameraCode"   column="camera_code"   />
+        <result property="alarmType"    column="alarm_type"    />
+        <result property="alarmLevel"   column="alarm_level"   />
+        <result property="alarmMessage" column="alarm_message" />
+        <result property="eventLogId"   column="event_log_id"  />
+        <result property="eventCode"    column="event_code"    />
+        <result property="eventName"    column="event_name"    />
+        <result property="stepId"       column="step_id"       />
+        <result property="stepNo"       column="step_no"       />
+        <result property="alarmTime"    column="alarm_time"    />
+        <result property="handleStatus" column="handle_status" />
+        <result property="handleBy"     column="handle_by"     />
+        <result property="handleTime"   column="handle_time"   />
+        <result property="handleRemark" column="handle_remark" />
+        <result property="createBy"     column="create_by"     />
+        <result property="createTime"   column="create_time"   />
+        <result property="updateBy"     column="update_by"     />
+        <result property="updateTime"   column="update_time"   />
+        <result property="remark"       column="remark"        />
+    </resultMap>
+
+    <sql id="selectSopAlarmRecordVo">
+        select alarm_id, alarm_code, task_id, task_code, product_code, station_code, camera_code,
+               alarm_type, alarm_level, alarm_message, event_log_id, event_code, event_name,
+               step_id, step_no, alarm_time, handle_status, handle_by, handle_time, handle_remark,
+               create_by, create_time, update_by, update_time, remark
+        from sop_alarm_record
+    </sql>
+
+    <select id="selectSopAlarmRecordList" parameterType="com.ruoyi.system.domain.sop.SopAlarmRecord" resultMap="SopAlarmRecordResult">
+        <include refid="selectSopAlarmRecordVo"/>
+        <where>
+            <if test="alarmCode != null and alarmCode != ''">and alarm_code like concat('%', #{alarmCode}, '%')</if>
+            <if test="taskId != null">and task_id = #{taskId}</if>
+            <if test="taskCode != null and taskCode != ''">and task_code like concat('%', #{taskCode}, '%')</if>
+            <if test="productCode != null and productCode != ''">and product_code like concat('%', #{productCode}, '%')</if>
+            <if test="stationCode != null and stationCode != ''">and station_code like concat('%', #{stationCode}, '%')</if>
+            <if test="cameraCode != null and cameraCode != ''">and camera_code like concat('%', #{cameraCode}, '%')</if>
+            <if test="alarmType != null and alarmType != ''">and alarm_type = #{alarmType}</if>
+            <if test="alarmLevel != null and alarmLevel != ''">and alarm_level = #{alarmLevel}</if>
+            <if test="handleStatus != null and handleStatus != ''">and handle_status = #{handleStatus}</if>
+            <if test="eventCode != null and eventCode != ''">and event_code like concat('%', #{eventCode}, '%')</if>
+            <if test="stepNo != null">and step_no = #{stepNo}</if>
+        </where>
+        order by alarm_id desc
+    </select>
+
+    <select id="selectSopAlarmRecordByAlarmId" parameterType="Long" resultMap="SopAlarmRecordResult">
+        <include refid="selectSopAlarmRecordVo"/>
+        where alarm_id = #{alarmId}
+    </select>
+
+    <insert id="insertSopAlarmRecord" parameterType="com.ruoyi.system.domain.sop.SopAlarmRecord" useGeneratedKeys="true" keyProperty="alarmId">
+        insert into sop_alarm_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="alarmCode != null and alarmCode != ''">alarm_code,</if>
+            <if test="taskId != null">task_id,</if>
+            <if test="taskCode != null">task_code,</if>
+            <if test="productCode != null">product_code,</if>
+            <if test="stationCode != null">station_code,</if>
+            <if test="cameraCode != null">camera_code,</if>
+            <if test="alarmType != null and alarmType != ''">alarm_type,</if>
+            <if test="alarmLevel != null">alarm_level,</if>
+            <if test="alarmMessage != null and alarmMessage != ''">alarm_message,</if>
+            <if test="eventLogId != null">event_log_id,</if>
+            <if test="eventCode != null">event_code,</if>
+            <if test="eventName != null">event_name,</if>
+            <if test="stepId != null">step_id,</if>
+            <if test="stepNo != null">step_no,</if>
+            <if test="alarmTime != null">alarm_time,</if>
+            <if test="handleStatus != null">handle_status,</if>
+            <if test="handleBy != null">handle_by,</if>
+            <if test="handleTime != null">handle_time,</if>
+            <if test="handleRemark != null">handle_remark,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null and createBy != ''">create_by,</if>
+            create_time,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="alarmCode != null and alarmCode != ''">#{alarmCode},</if>
+            <if test="taskId != null">#{taskId},</if>
+            <if test="taskCode != null">#{taskCode},</if>
+            <if test="productCode != null">#{productCode},</if>
+            <if test="stationCode != null">#{stationCode},</if>
+            <if test="cameraCode != null">#{cameraCode},</if>
+            <if test="alarmType != null and alarmType != ''">#{alarmType},</if>
+            <if test="alarmLevel != null">#{alarmLevel},</if>
+            <if test="alarmMessage != null and alarmMessage != ''">#{alarmMessage},</if>
+            <if test="eventLogId != null">#{eventLogId},</if>
+            <if test="eventCode != null">#{eventCode},</if>
+            <if test="eventName != null">#{eventName},</if>
+            <if test="stepId != null">#{stepId},</if>
+            <if test="stepNo != null">#{stepNo},</if>
+            <if test="alarmTime != null">#{alarmTime},</if>
+            <if test="handleStatus != null">#{handleStatus},</if>
+            <if test="handleBy != null">#{handleBy},</if>
+            <if test="handleTime != null">#{handleTime},</if>
+            <if test="handleRemark != null">#{handleRemark},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null and createBy != ''">#{createBy},</if>
+            sysdate(),
+        </trim>
+    </insert>
+
+    <update id="updateSopAlarmRecord" parameterType="com.ruoyi.system.domain.sop.SopAlarmRecord">
+        update sop_alarm_record
+        <set>
+            <if test="alarmCode != null and alarmCode != ''">alarm_code = #{alarmCode},</if>
+            <if test="taskId != null">task_id = #{taskId},</if>
+            <if test="taskCode != null">task_code = #{taskCode},</if>
+            <if test="productCode != null">product_code = #{productCode},</if>
+            <if test="stationCode != null">station_code = #{stationCode},</if>
+            <if test="cameraCode != null">camera_code = #{cameraCode},</if>
+            <if test="alarmType != null and alarmType != ''">alarm_type = #{alarmType},</if>
+            <if test="alarmLevel != null">alarm_level = #{alarmLevel},</if>
+            <if test="alarmMessage != null and alarmMessage != ''">alarm_message = #{alarmMessage},</if>
+            <if test="eventLogId != null">event_log_id = #{eventLogId},</if>
+            <if test="eventCode != null">event_code = #{eventCode},</if>
+            <if test="eventName != null">event_name = #{eventName},</if>
+            <if test="stepId != null">step_id = #{stepId},</if>
+            <if test="stepNo != null">step_no = #{stepNo},</if>
+            <if test="alarmTime != null">alarm_time = #{alarmTime},</if>
+            <if test="handleStatus != null">handle_status = #{handleStatus},</if>
+            <if test="handleBy != null">handle_by = #{handleBy},</if>
+            <if test="handleTime != null">handle_time = #{handleTime},</if>
+            <if test="handleRemark != null">handle_remark = #{handleRemark},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            update_time = sysdate()
+        </set>
+        where alarm_id = #{alarmId}
+    </update>
+
+    <delete id="deleteSopAlarmRecordByAlarmId" parameterType="Long">
+        delete from sop_alarm_record where alarm_id = #{alarmId}
+    </delete>
+
+    <delete id="deleteSopAlarmRecordByAlarmIds" parameterType="Long">
+        delete from sop_alarm_record where alarm_id in
+        <foreach collection="array" item="alarmId" open="(" separator="," close=")">
+            #{alarmId}
+        </foreach>
+    </delete>
+</mapper>

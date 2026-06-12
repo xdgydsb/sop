@@ -1,0 +1,59 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.venv/
+venv/
+
+# Node / frontend build
+node_modules/
+dist/
+build/
+
+# Java / Maven build
+target/
+*.class
+
+# Logs / runtime
+*.log
+runtime_logs/
+_deploy_time/
+_server_ref/
+
+# Local verification artifacts
+_demo_frame*.jpg
+_latest_*.jpg
+_mjpg_sample.bin
+
+# Archives
+*.zip
+*.7z
+*.rar
+
+# SOP runtime outputs and heavy local assets
+sop_system/runtime_outputs_ws/
+sop_system/logs/
+sop_system/data/
+sop_system/models/
+sop_system/manual_label_frames/
+sop_system/auto_label_review/
+sop_system/__pycache__/
+sop_system/yolo_manual_v1/train/
+sop_system/yolo_manual_v1/val/
+
+# Frontend local outputs
+SOP前后端/ruoyi-ui/node_modules/
+SOP前后端/ruoyi-ui/dist/
+SOP前后端/ruoyi-ui/build/
+
+# Backend packaged outputs
+SOP前后端/ruoyi-admin/target/

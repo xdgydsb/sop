@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.sop.SopDetectionTaskMapper">
+
+    <resultMap type="com.ruoyi.system.domain.sop.SopDetectionTask" id="SopDetectionTaskResult">
+        <id     property="taskId"        column="task_id"         />
+        <result property="taskCode"      column="task_code"       />
+        <result property="productId"     column="product_id"      />
+        <result property="productCode"   column="product_code"    />
+        <result property="productName"   column="product_name"    />
+        <result property="sopId"         column="sop_id"          />
+        <result property="sopName"       column="sop_name"        />
+        <result property="stationCode"   column="station_code"    />
+        <result property="cameraCode"    column="camera_code"     />
+        <result property="currentStepNo" column="current_step_no" />
+        <result property="taskStatus"    column="task_status"     />
+        <result property="startTime"     column="start_time"      />
+        <result property="endTime"       column="end_time"        />
+        <result property="operatorName"  column="operator_name"   />
+        <result property="previewStreamUrl" column="preview_stream_url" />
+        <result property="latestFrameUrl"   column="latest_frame_url"   />
+        <result property="runtimeMode"      column="runtime_mode"       />
+        <result property="runtimeMessage"   column="runtime_message"    />
+        <result property="runtimeFps"       column="runtime_fps"        />
+        <result property="createBy"      column="create_by"       />
+        <result property="createTime"    column="create_time"     />
+        <result property="updateBy"      column="update_by"       />
+        <result property="updateTime"    column="update_time"     />
+        <result property="remark"        column="remark"          />
+    </resultMap>
+
+    <sql id="selectSopDetectionTaskVo">
+        select t.task_id, t.task_code, t.product_id, pr.product_code, pr.product_name, t.sop_id, sp.sop_name,
+               t.station_code, t.camera_code, t.current_step_no, t.task_status, t.start_time, t.end_time,
+               t.operator_name, t.preview_stream_url, t.latest_frame_url, t.runtime_mode, t.runtime_message,
+               t.runtime_fps, t.create_by, t.create_time, t.update_by, t.update_time, t.remark
+        from sop_detection_task t
+        left join sop_product pr on pr.product_id = t.product_id
+        left join sop_process sp on sp.sop_id = t.sop_id
+    </sql>
+
+    <select id="selectSopDetectionTaskList" parameterType="com.ruoyi.system.domain.sop.SopDetectionTask" resultMap="SopDetectionTaskResult">
+        <include refid="selectSopDetectionTaskVo"/>
+        <where>
+            <if test="taskCode != null and taskCode != ''">and t.task_code like concat('%', #{taskCode}, '%')</if>
+            <if test="productId != null">and t.product_id = #{productId}</if>
+            <if test="productCode != null and productCode != ''">and pr.product_code like concat('%', #{productCode}, '%')</if>
+            <if test="sopId != null">and t.sop_id = #{sopId}</if>
+            <if test="stationCode != null and stationCode != ''">and t.station_code like concat('%', #{stationCode}, '%')</if>
+            <if test="cameraCode != null and cameraCode != ''">and t.camera_code like concat('%', #{cameraCode}, '%')</if>
+            <if test="taskStatus != null and taskStatus != ''">and t.task_status = #{taskStatus}</if>
+        </where>
+        order by t.task_id desc
+    </select>
+
+    <select id="selectSopDetectionTaskByTaskId" parameterType="Long" resultMap="SopDetectionTaskResult">
+        <include refid="selectSopDetectionTaskVo"/>
+        where t.task_id = #{taskId}
+    </select>
+
+    <select id="selectSopDetectionTaskByTaskCode" parameterType="String" resultMap="SopDetectionTaskResult">
+        <include refid="selectSopDetectionTaskVo"/>
+        where t.task_code = #{taskCode}
+    </select>
+
+    <insert id="insertSopDetectionTask" parameterType="com.ruoyi.system.domain.sop.SopDetectionTask" useGeneratedKeys="true" keyProperty="taskId">
+        insert into sop_detection_task
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="taskCode != null and taskCode != ''">task_code,</if>
+            <if test="productId != null">product_id,</if>
+            <if test="sopId != null">sop_id,</if>
+            <if test="stationCode != null">station_code,</if>
+            <if test="cameraCode != null">camera_code,</if>
+            <if test="currentStepNo != null">current_step_no,</if>
+            <if test="taskStatus != null and taskStatus != ''">task_status,</if>
+            <if test="startTime != null">start_time,</if>
+            <if test="endTime != null">end_time,</if>
+            <if test="operatorName != null">operator_name,</if>
+            <if test="previewStreamUrl != null">preview_stream_url,</if>
+            <if test="latestFrameUrl != null">latest_frame_url,</if>
+            <if test="runtimeMode != null">runtime_mode,</if>
+            <if test="runtimeMessage != null">runtime_message,</if>
+            <if test="runtimeFps != null">runtime_fps,</if>
+            <if test="remark != null">remark,</if>
+            <if test="createBy != null and createBy != ''">create_by,</if>
+            create_time,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="taskCode != null and taskCode != ''">#{taskCode},</if>
+            <if test="productId != null">#{productId},</if>
+            <if test="sopId != null">#{sopId},</if>
+            <if test="stationCode != null">#{stationCode},</if>
+            <if test="cameraCode != null">#{cameraCode},</if>
+            <if test="currentStepNo != null">#{currentStepNo},</if>
+            <if test="taskStatus != null and taskStatus != ''">#{taskStatus},</if>
+            <if test="startTime != null">#{startTime},</if>
+            <if test="endTime != null">#{endTime},</if>
+            <if test="operatorName != null">#{operatorName},</if>
+            <if test="previewStreamUrl != null">#{previewStreamUrl},</if>
+            <if test="latestFrameUrl != null">#{latestFrameUrl},</if>
+            <if test="runtimeMode != null">#{runtimeMode},</if>
+            <if test="runtimeMessage != null">#{runtimeMessage},</if>
+            <if test="runtimeFps != null">#{runtimeFps},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="createBy != null and createBy != ''">#{createBy},</if>
+            sysdate(),
+        </trim>
+    </insert>
+
+    <update id="updateSopDetectionTask" parameterType="com.ruoyi.system.domain.sop.SopDetectionTask">
+        update sop_detection_task
+        <set>
+            <if test="taskCode != null and taskCode != ''">task_code = #{taskCode},</if>
+            <if test="productId != null">product_id = #{productId},</if>
+            <if test="sopId != null">sop_id = #{sopId},</if>
+            <if test="stationCode != null">station_code = #{stationCode},</if>
+            <if test="cameraCode != null">camera_code = #{cameraCode},</if>
+            <if test="currentStepNo != null">current_step_no = #{currentStepNo},</if>
+            <if test="taskStatus != null and taskStatus != ''">task_status = #{taskStatus},</if>
+            <if test="startTime != null">start_time = #{startTime},</if>
+            <if test="endTime != null">end_time = #{endTime},</if>
+            <if test="operatorName != null">operator_name = #{operatorName},</if>
+            <if test="previewStreamUrl != null">preview_stream_url = #{previewStreamUrl},</if>
+            <if test="latestFrameUrl != null">latest_frame_url = #{latestFrameUrl},</if>
+            <if test="runtimeMode != null">runtime_mode = #{runtimeMode},</if>
+            <if test="runtimeMessage != null">runtime_message = #{runtimeMessage},</if>
+            <if test="runtimeFps != null">runtime_fps = #{runtimeFps},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            update_time = sysdate()
+        </set>
+        where task_id = #{taskId}
+    </update>
+
+    <delete id="deleteSopDetectionTaskByTaskId" parameterType="Long">
+        delete from sop_detection_task where task_id = #{taskId}
+    </delete>
+
+    <delete id="deleteSopDetectionTaskByTaskIds" parameterType="Long">
+        delete from sop_detection_task where task_id in
+        <foreach collection="array" item="taskId" open="(" separator="," close=")">
+            #{taskId}
+        </foreach>
+    </delete>
+</mapper>
