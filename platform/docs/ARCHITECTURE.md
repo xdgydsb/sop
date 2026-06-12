@@ -132,6 +132,11 @@ A vertical product capability is done only when it includes:
 A page with static data, a button without backend behavior, or an inference
 result without evidence is not a completed feature.
 
+The browser interface is a required product surface, not an optional wrapper.
+After the execution primitives are established, each new capability must ship
+as a vertical slice with its API, runtime behavior, UI states and browser
+verification. Detailed UI requirements are defined in `docs/PRODUCT_UI.md`.
+
 ## 7. First Vertical Slice
 
 The first slice is **run one real operator work cycle at one workstation**:

@@ -56,6 +56,8 @@ recorded in [Research Decisions](docs/RESEARCH_DECISIONS_20260612.md) and
 [Evaluation Plan](docs/EVALUATION_PLAN.md).
 Fast operator actions are handled according to
 [Fast Action Strategy](docs/FAST_ACTION_STRATEGY.md).
+The required browser product surface is defined in
+[Product UI](docs/PRODUCT_UI.md).
 
 ## Current Verification
 
