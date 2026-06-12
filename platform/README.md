@@ -47,4 +47,14 @@ Empty frameworks and placeholder pages are intentionally avoided.
 
 See [Architecture](docs/ARCHITECTURE.md) for module boundaries and acceptance
 rules. See [Domain Model](docs/DOMAIN_MODEL.md) for industrial workstation,
-operator action and judgement semantics.
+operator action and judgement semantics. See
+[Vision/Runtime Boundary](docs/VISION_RUNTIME_BOUNDARY.md) for algorithm
+responsibilities.
+
+## Current Verification
+
+Run the domain and runtime tests with:
+
+```powershell
+.\platform\scripts\test.ps1
+```
