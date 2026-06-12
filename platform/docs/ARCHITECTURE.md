@@ -16,6 +16,11 @@ performance or team ownership requires it.
 
 ## 2. Product Modules
 
+The business center is industrial operator work compliance: a worker performs
+an operation at a workstation for a work order, and the product determines
+whether the observed state transition follows the released SOP. Object
+detection is supporting evidence, not the business result.
+
 ### Control Plane
 
 - Dataset and annotation management.
@@ -73,10 +78,20 @@ Forbidden dependencies:
 The first implementation must define these versioned contracts before building
 pages:
 
+- `ProductionLine`
+- `Workstation`
+- `Operator`
+- `ProductVariant`
+- `WorkOrder`
 - `AlgorithmVersion`
 - `ModelVersion`
 - `SopDefinition`
 - `SopRelease`
+- `OperationDefinition`
+- `WorkCycle`
+- `OperationAttempt`
+- `Judgement`
+- `Deviation`
 - `CameraSource`
 - `ComputeNode`
 - `Deployment`
@@ -119,16 +134,17 @@ result without evidence is not a completed feature.
 
 ## 7. First Vertical Slice
 
-The first slice is **publish and run one real SOP**:
+The first slice is **run one real operator work cycle at one workstation**:
 
 1. Register one algorithm/model version.
-2. Create an SOP definition with ordered steps and temporal rules.
-3. Bind one real camera and one compute node.
-4. Publish an immutable SOP release.
-5. Start, stop and reset a runtime session.
-6. Show live video and immediate step state.
-7. Store corresponding evidence for every accepted event.
-8. Recover clearly from camera or inference disconnection.
+2. Define each operation's precondition, action, postcondition and error rules.
+3. Publish an immutable SOP release for one product variant.
+4. Bind one real workstation, camera and compute node.
+5. Start a work cycle manually or from a work-order trigger.
+6. Show live video and immediate operation judgement.
+7. Store corresponding evidence and deviations for every attempted operation.
+8. Complete, reject or send the product cycle to manual review.
+9. Recover clearly from camera or inference disconnection without blaming the operator.
 
 The existing five-step package SOP may supply adapters for this slice only if it
 passes the legacy admission gate.

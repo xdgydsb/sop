@@ -46,4 +46,5 @@ Empty frameworks and placeholder pages are intentionally avoided.
 10. No generated files, model weights, recordings or runtime logs in Git.
 
 See [Architecture](docs/ARCHITECTURE.md) for module boundaries and acceptance
-rules.
+rules. See [Domain Model](docs/DOMAIN_MODEL.md) for industrial workstation,
+operator action and judgement semantics.
