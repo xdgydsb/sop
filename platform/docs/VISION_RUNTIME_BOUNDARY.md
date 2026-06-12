@@ -87,3 +87,6 @@
 - 证据视频缓存。
 
 接入这些能力前，不修改 Runtime 的业务判定职责。
+
+快速动作的采集、队列和短时证据策略见
+`platform/docs/FAST_ACTION_STRATEGY.md`。

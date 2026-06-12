@@ -6,6 +6,7 @@ about YOLO, camera SDKs, HTTP, databases, or user interfaces.
 
 from __future__ import annotations
 
+from collections import deque
 from dataclasses import dataclass
 
 from sop_contracts import (
@@ -40,6 +41,7 @@ class SopRuntime:
 
     def reset(self) -> None:
         self._previous: Observation | None = None
+        self._history: deque[Observation] = deque()
         self._cycle_start_ms: int | None = None
         self._operation_started_ms: int | None = None
         self._current_index = 0
@@ -67,16 +69,19 @@ class SopRuntime:
         if not observation.source_healthy:
             self._record_interruption(observation)
             self._previous = observation
+            self._history.clear()
             return self.snapshot()
 
         if not observation.confidence_sufficient:
             self._record_uncertain(observation)
             self._previous = observation
+            self._append_history(observation)
             return self.snapshot()
 
         self._interrupted = False
         if self._previous is None or not self._previous.source_healthy:
             self._previous = observation
+            self._append_history(observation)
             return self.snapshot()
 
         self._detect_wrong_order(observation)
@@ -85,6 +90,7 @@ class SopRuntime:
             self._evaluate_current(operation, observation)
 
         self._previous = observation
+        self._append_history(observation)
         return self.snapshot()
 
     @property
@@ -127,10 +133,14 @@ class SopRuntime:
             self._statuses[operation_id] is JudgementStatus.PASS
             for operation_id in operation.prerequisites
         )
-        preconditions_match = self._conditions_match(
-            operation.preconditions, self._previous
+        transition_start = self._find_transition_start(
+            operation.trigger, observation
         )
-        trigger_matches = operation.trigger.matches(self._previous, observation)
+        preconditions_match = (
+            transition_start is not None
+            and self._conditions_match(operation.preconditions, transition_start)
+        )
+        trigger_matches = transition_start is not None
         if not (prerequisites_passed and preconditions_match and trigger_matches):
             return
 
@@ -154,7 +164,7 @@ class SopRuntime:
     def _detect_wrong_order(self, observation: Observation) -> None:
         assert self._previous is not None
         for future in self.definition.operations[self._current_index + 1 :]:
-            if not future.trigger.matches(self._previous, observation):
+            if self._find_transition_start(future.trigger, observation) is None:
                 continue
             key = (
                 DeviationType.WRONG_ORDER,
@@ -284,6 +294,40 @@ class SopRuntime:
             self._statuses[self._candidate_operation_id] = JudgementStatus.WAITING
         self._candidate_operation_id = None
         self._candidate_started_ms = None
+
+    def _find_transition_start(
+        self, trigger, current: Observation
+    ) -> Observation | None:
+        if current.facts.get(trigger.key) != trigger.to_value:
+            return None
+
+        candidates = list(self._history)
+        if self._previous is not None and (
+            not candidates or candidates[-1] is not self._previous
+        ):
+            candidates.append(self._previous)
+
+        for index in range(len(candidates) - 1, -1, -1):
+            start = candidates[index]
+            if current.timestamp_ms - start.timestamp_ms > trigger.max_gap_ms:
+                break
+            if start.facts.get(trigger.key) != trigger.from_value:
+                continue
+            if trigger.interaction is None:
+                return start
+            interval = candidates[index:] + [current]
+            if any(trigger.interaction in item.interactions for item in interval):
+                return start
+        return None
+
+    def _append_history(self, observation: Observation) -> None:
+        self._history.append(observation)
+        max_gap_ms = max(
+            operation.trigger.max_gap_ms for operation in self.definition.operations
+        )
+        cutoff = observation.timestamp_ms - max_gap_ms
+        while self._history and self._history[0].timestamp_ms < cutoff:
+            self._history.popleft()
 
     @staticmethod
     def _conditions_match(

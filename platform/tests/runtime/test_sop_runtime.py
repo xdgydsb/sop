@@ -255,14 +255,48 @@ class SopRuntimeTests(unittest.TestCase):
             JudgementStatus.WAITING, snapshot.statuses["open_box"]
         )
 
+        self.runtime.update(observation(300, facts={"box.state": "open"}))
+        snapshot = self.runtime.update(
+            observation(800, facts={"box.state": "open"})
+        )
+        self.assertEqual(
+            JudgementStatus.WAITING, snapshot.statuses["open_box"]
+        )
+
     def test_stale_or_duplicate_frame_is_rejected(self) -> None:
         self.runtime.update(observation(100))
         with self.assertRaisesRegex(ValueError, "strictly increasing"):
             self.runtime.update(observation(100, sequence_no=101))
 
-        self.runtime.update(observation(300, facts={"box.state": "open"}))
+    def test_fast_action_survives_brief_occlusion_between_states(self) -> None:
+        self.runtime.update(observation(0))
+        self.runtime.update(
+            Observation(
+                timestamp_ms=80,
+                facts={},
+                interactions=frozenset({"hand:box"}),
+                confidence_sufficient=False,
+                frame_ref="occluded-action-frame",
+            )
+        )
         snapshot = self.runtime.update(
-            observation(800, facts={"box.state": "open"})
+            observation(160, facts={"box.state": "open"})
+        )
+        self.assertEqual(
+            JudgementStatus.IN_PROGRESS, snapshot.statuses["open_box"]
+        )
+        snapshot = self.runtime.update(
+            observation(480, facts={"box.state": "open"})
+        )
+        self.assertEqual(JudgementStatus.PASS, snapshot.statuses["open_box"])
+
+    def test_old_interaction_cannot_authorize_later_static_state_change(self) -> None:
+        self.runtime.update(observation(0))
+        self.runtime.update(
+            observation(100, interactions={"hand:box"})
+        )
+        snapshot = self.runtime.update(
+            observation(1400, facts={"box.state": "open"})
         )
         self.assertEqual(
             JudgementStatus.WAITING, snapshot.statuses["open_box"]

@@ -61,6 +61,11 @@ class TransitionCondition:
     from_value: Any
     to_value: Any
     interaction: str | None = None
+    max_gap_ms: int = 1200
+
+    def __post_init__(self) -> None:
+        if self.max_gap_ms <= 0:
+            raise ValueError("max_gap_ms must be positive")
 
     def matches(self, previous: "Observation", current: "Observation") -> bool:
         changed = (
