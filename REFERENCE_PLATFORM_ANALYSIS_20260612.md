@@ -210,3 +210,11 @@
 - 稳定标签：`stable-sop-detect-20260611`
 - 平台化开发分支：`platform-v2`
 - `main` 保留当前可用版本，平台化工作在独立分支纵向推进。
+
+## 11. 新项目代码组织
+
+- 新产品代码统一放入 `platform/`，旧目录不得继续承载新功能。
+- 采用“Web、业务 API、SOP Runtime、采集/推理 Worker、共享契约、基础设施”分层。
+- 新代码禁止直接引用 `sop_system/` 或 `SOP前后端/`；复用能力必须经过 legacy adapter 转换成统一契约。
+- 先按完整纵向能力开发，再进入下一个模块，禁止同时铺开大量静态页面和空接口。
+- 当前架构规则见 `platform/docs/ARCHITECTURE.md`。
