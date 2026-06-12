@@ -9,7 +9,12 @@ PLATFORM_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(PLATFORM_ROOT / "packages" / "contracts" / "src"))
 sys.path.insert(0, str(PLATFORM_ROOT / "services" / "runtime" / "src"))
 
-from sop_contracts import DeviationType, JudgementStatus, Observation
+from sop_contracts import (
+    DeviationType,
+    JudgementStatus,
+    Observation,
+    ObservationProvenance,
+)
 from sop_runtime import SopRuntime
 from sop_runtime.examples import package_five_step_sop
 
@@ -29,6 +34,7 @@ def observation(
     interactions: set[str] | None = None,
     healthy: bool = True,
     confident: bool = True,
+    sequence_no: int | None = None,
 ) -> Observation:
     values = dict(BASE_FACTS)
     if facts:
@@ -40,6 +46,13 @@ def observation(
         source_healthy=healthy,
         confidence_sufficient=confident,
         frame_ref=f"frame-{timestamp_ms}",
+        provenance=ObservationProvenance(
+            producer="test-vision-adapter",
+            producer_version="1.0.0",
+            sequence_no=timestamp_ms if sequence_no is None else sequence_no,
+            latency_ms=10,
+            model_versions={"detector": "test-yolo"},
+        ),
     )
 
 
@@ -241,6 +254,11 @@ class SopRuntimeTests(unittest.TestCase):
         self.assertEqual(
             JudgementStatus.WAITING, snapshot.statuses["open_box"]
         )
+
+    def test_stale_or_duplicate_frame_is_rejected(self) -> None:
+        self.runtime.update(observation(100))
+        with self.assertRaisesRegex(ValueError, "strictly increasing"):
+            self.runtime.update(observation(100, sequence_no=101))
 
         self.runtime.update(observation(300, facts={"box.state": "open"}))
         snapshot = self.runtime.update(

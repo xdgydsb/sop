@@ -51,6 +51,10 @@ operator action and judgement semantics. See
 [Vision/Runtime Boundary](docs/VISION_RUNTIME_BOUNDARY.md) for algorithm
 responsibilities.
 
+External research decisions and the real-workstation validation strategy are
+recorded in [Research Decisions](docs/RESEARCH_DECISIONS_20260612.md) and
+[Evaluation Plan](docs/EVALUATION_PLAN.md).
+
 ## Current Verification
 
 Run the domain and runtime tests with:

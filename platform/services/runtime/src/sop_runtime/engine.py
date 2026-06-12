@@ -55,6 +55,11 @@ class SopRuntime:
         self._interrupted = False
 
     def update(self, observation: Observation) -> RuntimeSnapshot:
+        if (
+            self._previous is not None
+            and observation.timestamp_ms <= self._previous.timestamp_ms
+        ):
+            raise ValueError("observations must have strictly increasing timestamps")
         if self._cycle_start_ms is None:
             self._cycle_start_ms = observation.timestamp_ms
             self._operation_started_ms = observation.timestamp_ms

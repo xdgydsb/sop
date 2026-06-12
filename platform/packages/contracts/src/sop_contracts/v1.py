@@ -78,6 +78,28 @@ class TransitionCondition:
 
 
 @dataclass(frozen=True)
+class ObservationProvenance:
+    producer: str
+    producer_version: str
+    sequence_no: int
+    latency_ms: int | None = None
+    model_versions: Mapping[str, str] = field(default_factory=dict)
+
+    def __post_init__(self) -> None:
+        if not self.producer.strip():
+            raise ValueError("producer is required")
+        if not self.producer_version.strip():
+            raise ValueError("producer_version is required")
+        if self.sequence_no < 0:
+            raise ValueError("sequence_no must be non-negative")
+        if self.latency_ms is not None and self.latency_ms < 0:
+            raise ValueError("latency_ms must be non-negative")
+        object.__setattr__(
+            self, "model_versions", MappingProxyType(dict(self.model_versions))
+        )
+
+
+@dataclass(frozen=True)
 class Observation:
     timestamp_ms: int
     facts: Mapping[str, Any]
@@ -85,6 +107,7 @@ class Observation:
     source_healthy: bool = True
     confidence_sufficient: bool = True
     frame_ref: str | None = None
+    provenance: ObservationProvenance | None = None
 
     def __post_init__(self) -> None:
         if self.timestamp_ms < 0:
