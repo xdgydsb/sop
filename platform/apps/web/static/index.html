@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>曜工 AI · 工业作业智能平台</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%23071210'/><path d='M13 45l8-28h9l-8 28zm15 0l8-34h9l-8 34zm15 0l7-23h9l-7 23z' fill='%2348dfae'/></svg>">
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <span class="brand-mark"><i></i><i></i><i></i></span>
+        <div><strong>曜工 AI</strong><small>工业作业智能平台</small></div>
+      </div>
+      <nav id="nav">
+        <button class="nav-item active" data-view="dashboard"><b>01</b><span>生产工作台</span></button>
+        <button class="nav-item" data-view="designer"><b>02</b><span>SOP 设计中心</span></button>
+        <button class="nav-item" data-view="models"><b>03</b><span>数据与模型</span></button>
+        <button class="nav-item" data-view="stations"><b>04</b><span>工位与设备</span></button>
+        <button class="nav-item" data-view="runtime"><b>05</b><span>实时作业检测</span></button>
+        <button class="nav-item" data-view="evidence"><b>06</b><span>任务与证据</span></button>
+      </nav>
+      <div class="sidebar-foot">
+        <span class="pulse"></span>
+        <div><strong id="systemState">正在自检</strong><small>STATION-01</small></div>
+      </div>
+    </aside>
+
+    <main>
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">PRODUCTION INTELLIGENCE / 01</p>
+          <h1 id="pageTitle">生产工作台</h1>
+        </div>
+        <div class="top-actions">
+          <div class="clock"><span id="today"></span><strong id="clock"></strong></div>
+          <button class="icon-button" id="refreshButton" title="刷新">↻</button>
+          <div class="operator"><span>ZW</span><div><strong>平台管理员</strong><small>生产运行中心</small></div></div>
+        </div>
+      </header>
+
+      <section class="view active" id="view-dashboard">
+        <div class="hero">
+          <div>
+            <p class="eyebrow accent">AI STANDARD OPERATING PROCEDURE</p>
+            <h2>让每一个工序<br><em>可配置、可判定、可追溯</em></h2>
+            <p>面向包装、装配与人工操作工位，将视觉观察、动作时序和作业标准连接成一条真实运行链路。</p>
+            <button class="primary" data-jump="runtime">进入实时检测 <span>→</span></button>
+          </div>
+          <div class="hero-orbit">
+            <div class="orbit orbit-a"></div><div class="orbit orbit-b"></div>
+            <div class="core"><span>LIVE</span><strong id="heroFps">--</strong><small>推理 FPS</small></div>
+            <div class="orbit-label label-a">目标检测</div>
+            <div class="orbit-label label-b">手物关系</div>
+            <div class="orbit-label label-c">时序判定</div>
+          </div>
+        </div>
+        <div class="metric-grid">
+          <article><span>运行工位</span><strong>01</strong><small id="stationMetric">等待设备</small></article>
+          <article><span>已发布 SOP</span><strong id="releaseMetric">00</strong><small id="releaseMetricText">尚未发布版本</small></article>
+          <article><span>今日完成</span><strong id="completedMetric">--</strong><small>来自真实任务记录</small></article>
+          <article><span>当前告警</span><strong id="alarmMetric">--</strong><small>漏做 / 错序 / 超时</small></article>
+        </div>
+        <div class="dashboard-grid">
+          <article class="panel production-card">
+            <div class="panel-head"><div><p class="eyebrow">CURRENT JOB</p><h3>当前作业周期</h3></div><span class="status-chip" id="dashboardMode">未连接</span></div>
+            <div class="job-line"><span>产品</span><strong>SOP 演示产品</strong></div>
+            <div class="job-line"><span>作业标准</span><strong>包装五步作业 · v1</strong></div>
+            <div class="job-line"><span>工位</span><strong>包装检测工位 01</strong></div>
+            <div class="progress-track"><i id="dashboardProgress"></i></div>
+            <div class="progress-copy"><span id="progressText">等待Runtime连接</span><b id="progressPercent">0%</b></div>
+          </article>
+          <article class="panel health-card">
+            <div class="panel-head"><div><p class="eyebrow">SYSTEM HEALTH</p><h3>运行链路</h3></div><button class="text-button" data-jump="stations">查看设备</button></div>
+            <div id="healthList" class="health-list"></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="view" id="view-designer">
+        <div class="section-intro"><div><p class="eyebrow accent">VISUAL SOP DESIGNER</p><h2>把老师傅的作业经验，编排成可执行规则</h2></div><div class="commands"><button class="secondary" id="saveSopButton">保存草稿</button><button class="primary" id="publishSopButton">校验并发布</button></div></div>
+        <div class="designer-layout">
+          <aside class="component-palette">
+            <p class="eyebrow">节点组件</p>
+            <button><span>◉</span>开始节点</button><button><span>◇</span>动作工序</button><button><span>?</span>条件判断</button><button><span>!</span>异常分支</button><button><span>◎</span>结束节点</button>
+            <div class="palette-note"><b>当前版本</b><span id="draftVersion">包装五步作业草稿</span><small id="draftStatus">草稿 · 未发布</small></div>
+          </aside>
+          <div class="flow-canvas">
+            <div class="canvas-toolbar"><span>100%</span><button>−</button><button>+</button><i></i><span>自动布局</span></div>
+            <div id="flowNodes" class="flow-nodes"></div>
+          </div>
+          <aside class="inspector">
+            <p class="eyebrow">工序属性</p>
+            <div id="inspectorEmpty" class="empty-inspector">选择画布中的工序节点</div>
+            <form id="stepForm" hidden>
+              <label>工序名称<input id="stepName"></label>
+              <label>语义事件<input id="stepEvent" readonly></label>
+              <label>判定规则<textarea id="stepRule" rows="4"></textarea></label>
+              <label>结果保持时间<div class="input-unit"><input id="stepHold" type="number" min="0"><span>ms</span></div></label>
+              <label>绑定模型<select><option>包装工序视觉模型 v1.0.0</option></select></label>
+              <button type="submit" class="secondary">应用修改</button>
+            </form>
+          </aside>
+        </div>
+      </section>
+
+      <section class="view" id="view-models">
+        <div class="section-intro"><div><p class="eyebrow accent">DATA & MODEL REGISTRY</p><h2>数据、标签、训练与模型版本统一管理</h2></div><button class="primary muted" title="第二阶段实现">新建训练任务</button></div>
+        <div class="model-overview">
+          <article class="model-primary panel">
+            <div class="model-badge">V1</div><div><p class="eyebrow">PRODUCTION MODEL</p><h3>包装工序视觉模型</h3><p>目标检测、手物关系与时序规则的组合模型，服务首个真实包装工位。</p></div>
+            <span class="status-chip online">可运行</span>
+          </article>
+          <article class="panel dataset-card"><p class="eyebrow">LABEL SET</p><div id="labelCloud" class="label-cloud"></div></article>
+          <article class="panel pipeline-card"><p class="eyebrow">MODEL PIPELINE</p><div class="pipeline"><span>采集</span><i></i><span>标注</span><i></i><span>训练</span><i></i><span class="active">发布</span></div><small>AI辅助标注必须经过人工审核，模型发布保留版本和回滚能力。</small></article>
+        </div>
+      </section>
+
+      <section class="view" id="view-stations">
+        <div class="section-intro"><div><p class="eyebrow accent">EDGE & STATION</p><h2>工位、相机与算力节点保持版本一致</h2></div><div class="commands"><button class="secondary" id="stationRefresh">重新自检</button><button class="primary" id="deployButton">部署最新版本</button></div></div>
+        <div class="station-grid">
+          <article class="station-card panel">
+            <div class="station-visual"><span>ST-01</span><div class="scan-line"></div></div>
+            <div class="station-info"><div class="panel-head"><div><p class="eyebrow">WORKSTATION</p><h3>包装检测工位 01</h3></div><span class="status-chip" id="stationStatus">自检中</span></div>
+            <dl><div><dt>工业相机</dt><dd>Hikrobot MV-CS050-10UC</dd></div><div><dt>采集 Worker</dt><dd>Local Hik Camera Worker</dd></div><div><dt>推理节点</dt><dd>192.168.31.19:8765</dd></div><div><dt>部署 SOP</dt><dd id="deploymentVersion">尚未部署发布版本</dd></div></dl></div>
+          </article>
+          <article class="panel diagnostics"><p class="eyebrow">LIVE DIAGNOSTICS</p><div id="diagnosticList"></div></article>
+        </div>
+      </section>
+
+      <section class="view runtime-view" id="view-runtime">
+        <div class="runtime-command">
+          <div class="selectors"><label>产品<strong>SOP 演示产品</strong></label><label>SOP<strong>包装五步作业 v1</strong></label><label>工位<strong>STATION-01</strong></label></div>
+          <div class="commands"><button class="primary" id="startButton">▶ 开始检测</button><button class="danger" id="stopButton">■ 停止检测</button><button class="secondary" id="resetButton">↻ 重置检测</button></div>
+        </div>
+        <div class="runtime-grid">
+          <article class="live-panel">
+            <div class="live-head"><div><span class="live-dot"></span><strong>实时工位画面</strong><small id="liveMessage">正在连接运行链路</small></div><div class="telemetry"><span>采集 <b id="captureFps">--</b> FPS</span><span>推理 <b id="runtimeFps">--</b> FPS</span><span>延迟 <b id="runtimeLatency">--</b> ms</span></div></div>
+            <div class="video-stage">
+              <img id="liveStream" alt="实时相机画面">
+              <div class="video-empty" id="videoEmpty"><span>CAMERA</span><strong>等待实时相机</strong><small>系统不会用离线视频或过时图片代替实时画面</small></div>
+              <div class="video-overlay"><span id="overlayMode">OFFLINE</span><b id="overlayExpected">等待运行服务</b></div>
+            </div>
+            <div class="evidence-strip" id="evidenceStrip"></div>
+          </article>
+          <aside class="step-panel">
+            <div class="step-panel-head"><div><p class="eyebrow">OPERATION SEQUENCE</p><h3>工序实时判定</h3></div><span id="stepCount">0 / 5</span></div>
+            <div id="runtimeSteps" class="runtime-steps"></div>
+            <div class="judge-box"><p class="eyebrow">JUDGEMENT BASIS</p><strong id="judgeTitle">等待开始检测</strong><span id="judgeReason">动作必须满足前置状态、手物交互、状态转移和后置稳定。</span></div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="view" id="view-evidence">
+        <div class="section-intro"><div><p class="eyebrow accent">TRACEABILITY</p><h2>每一个判定，都能回到真实动作证据</h2></div><button class="secondary" id="evidenceRefresh">刷新任务</button></div>
+        <div class="evidence-layout">
+          <article class="panel task-summary"><p class="eyebrow">CURRENT CYCLE</p><h3 id="evidenceTask">暂无任务</h3><div class="summary-stats"><span><b id="evidencePassed">0</b>通过步骤</span><span><b id="evidenceAlarms">0</b>异常记录</span><span><b id="evidenceClips">0</b>动作片段</span></div></article>
+          <article class="panel evidence-table-wrap"><table><thead><tr><th>工序</th><th>状态</th><th>判定说明</th><th>证据</th></tr></thead><tbody id="evidenceTable"></tbody></table></article>
+        </div>
+      </section>
+    </main>
+  </div>
+  <div id="toast" class="toast"></div>
+  <script src="/static/app.js"></script>
+</body>
+</html>

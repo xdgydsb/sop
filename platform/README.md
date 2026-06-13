@@ -58,6 +58,8 @@ Fast operator actions are handled according to
 [Fast Action Strategy](docs/FAST_ACTION_STRATEGY.md).
 The required browser product surface is defined in
 [Product UI](docs/PRODUCT_UI.md).
+The non-negotiable product direction derived from `参考.mp4` is recorded in
+[Reference Target](docs/REFERENCE_TARGET.md).
 
 ## Current Verification
 
@@ -66,3 +68,13 @@ Run the domain and runtime tests with:
 ```powershell
 .\platform\scripts\test.ps1
 ```
+
+Start the current product slice with:
+
+```powershell
+py -3.10 .\platform\apps\api\run.py
+```
+
+Then open `http://127.0.0.1:18888`. The page reports unavailable camera or
+runtime services explicitly; it does not substitute offline video or fake
+judgements.
