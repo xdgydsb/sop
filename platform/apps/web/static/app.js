@@ -87,7 +87,11 @@ function renderCatalog() {
     : "尚未发布版本";
   $("#draftVersion").textContent = `${state.catalog.sop.name} 草稿 v${state.catalog.sop.version}`;
   $("#draftStatus").textContent = latestRelease
-    ? `最新发布 v${latestRelease.version}`
+    ? `最新发布 v${latestRelease.version} · ${
+        latestRelease.runtimeCompatibility === "LEGACY_STAGE3"
+          ? "兼容当前 stage3"
+          : "需要通用 Runtime"
+      }`
     : "草稿 · 未发布";
   $("#deploymentVersion").textContent = latestDeployment
     ? `${latestDeployment.releaseId} · ${latestDeployment.status}`
@@ -176,6 +180,18 @@ function initDesigner() {
     step.holdMs = Number($("#stepHold").value);
     renderFlow();
     toast("工序属性已应用到草稿");
+  });
+  $("#deleteStepButton").addEventListener("click", () => {
+    if (state.catalog.sop.steps.length <= 1) {
+      toast("SOP 至少保留一个步骤", true);
+      return;
+    }
+    const [removed] = state.catalog.sop.steps.splice(state.selectedStep, 1);
+    state.selectedStep = Math.max(0, state.selectedStep - 1);
+    $("#stepForm").hidden = true;
+    $("#inspectorEmpty").hidden = false;
+    renderFlow();
+    toast(`已从草稿删除“${removed.name}”，保存后写入数据库`);
   });
   $("#saveSopButton").addEventListener("click", saveSop);
   $("#publishSopButton").addEventListener("click", publishSop);

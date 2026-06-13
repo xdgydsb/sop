@@ -62,6 +62,9 @@ The non-negotiable product direction derived from `参考.mp4` is recorded in
 [Reference Target](docs/REFERENCE_TARGET.md).
 The current truthful feature coverage and reuse decisions are recorded in
 [Current Capability Audit](docs/CURRENT_CAPABILITY_AUDIT_20260613.md).
+The fast-action diagnosis, edge-computing explanation, and dynamic-SOP database
+design are documented in
+[Fast Action and Database Answer](docs/FAST_ACTION_AND_DATABASE_ANSWER.md).
 
 ## Current Verification
 

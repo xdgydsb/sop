@@ -44,7 +44,8 @@ class FakeRuntime:
 class PlatformApiTests(unittest.TestCase):
     def setUp(self) -> None:
         self.temp = tempfile.TemporaryDirectory()
-        store = CatalogStore(Path(self.temp.name) / "catalog.json")
+        self.store_path = Path(self.temp.name) / "platform.db"
+        store = CatalogStore(self.store_path)
         self.app = create_app(FakeRuntime(), store)
         self.client = self.app.test_client()
 
@@ -71,6 +72,7 @@ class PlatformApiTests(unittest.TestCase):
         self.assertEqual(200, response.status_code)
         saved = self.client.get("/api/platform/catalog").get_json()["data"]["sop"]
         self.assertEqual(420, saved["steps"][0]["holdMs"])
+        self.assertTrue(self.store_path.exists())
 
     def test_invalid_sop_is_rejected(self) -> None:
         response = self.client.put("/api/platform/sop", json={"steps": []})
@@ -102,6 +104,30 @@ class PlatformApiTests(unittest.TestCase):
         self.assertEqual("STAGED", deployment["status"])
         self.assertFalse(deployment["runtimeApplied"])
         self.assertEqual(release["releaseId"], deployment["releaseId"])
+
+    def test_deleted_step_persists_and_requires_generic_runtime(self) -> None:
+        sop = self.client.get("/api/platform/catalog").get_json()["data"]["sop"]
+        removed = sop["steps"].pop(2)
+        response = self.client.put("/api/platform/sop", json=sop)
+        self.assertEqual(200, response.status_code)
+
+        saved = self.client.get("/api/platform/catalog").get_json()["data"]["sop"]
+        self.assertEqual(4, len(saved["steps"]))
+        self.assertNotIn(removed["id"], [step["id"] for step in saved["steps"]])
+        reopened = CatalogStore(self.store_path).get()["sop"]
+        self.assertEqual(4, len(reopened["steps"]))
+
+        release = self.client.post("/api/platform/sop/releases").get_json()["data"]
+        self.assertEqual("GENERIC_RUNTIME_REQUIRED", release["runtimeCompatibility"])
+        deployment = self.client.post(
+            "/api/platform/deployments",
+            json={
+                "releaseId": release["releaseId"],
+                "stationId": "STATION-01",
+            },
+        ).get_json()["data"]
+        self.assertEqual("BLOCKED", deployment["status"])
+        self.assertFalse(deployment["runtimeApplied"])
 
     def test_unknown_release_cannot_be_deployed(self) -> None:
         response = self.client.post(

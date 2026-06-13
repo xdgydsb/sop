@@ -63,7 +63,7 @@ def create_app(
         Path(
             os.getenv(
                 "PLATFORM_CATALOG_PATH",
-                str(app_root.parents[2] / "runtime_logs" / "platform" / "catalog.json"),
+                str(app_root.parents[2] / "runtime_logs" / "platform" / "platform.db"),
             )
         )
     )
