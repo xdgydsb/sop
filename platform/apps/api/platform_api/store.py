@@ -18,7 +18,9 @@ DEFAULT_CATALOG = {
             "name": "包装工序视觉模型",
             "version": "1.0.0",
             "type": "目标检测 + 手物关系 + 时序规则",
-            "status": "READY",
+            "status": "BASELINE_VERIFIED",
+            "verifiedAt": "2026-06-11",
+            "verification": "真实海康相机五步流程稳定基线",
             "labels": ["box_open", "box_closed", "earphone", "charger", "green_bag"],
         }
     ],
@@ -90,6 +92,11 @@ class CatalogStore:
             self._data = json.loads(self.path.read_text(encoding="utf-8"))
             self._data.setdefault("releases", [])
             self._data.setdefault("deployments", [])
+            for model in self._data.get("models", []):
+                if model.get("status") == "READY":
+                    model["status"] = "BASELINE_VERIFIED"
+                    model["verifiedAt"] = "2026-06-11"
+                    model["verification"] = "真实海康相机五步流程稳定基线"
 
     def get(self) -> dict[str, Any]:
         with self._lock:
@@ -148,8 +155,10 @@ class CatalogStore:
                 "releaseId": release_id,
                 "stationId": station_id,
                 "modelId": release["modelId"],
-                "status": "ACTIVE",
-                "deployedAt": datetime.now(timezone.utc).isoformat(),
+                "status": "STAGED",
+                "runtimeApplied": False,
+                "message": "部署配置已生成，等待 Worker 下发接口确认",
+                "stagedAt": datetime.now(timezone.utc).isoformat(),
             }
             self._data["deployments"].append(deployment)
             self._persist()

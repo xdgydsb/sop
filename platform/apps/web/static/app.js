@@ -9,6 +9,13 @@ const state = {
 
 const $ = selector => document.querySelector(selector);
 const $$ = selector => [...document.querySelectorAll(selector)];
+const eventNames = {
+  box_opened: "盒子由关闭变为打开",
+  earphone_in_box: "耳机由盒外进入盒内",
+  charger_in_box: "充电器由盒外进入盒内",
+  green_bag_in_box: "绿色小袋由盒外进入盒内",
+  box_closed: "盒子由打开变为关闭"
+};
 
 function toast(message, error = false) {
   const el = $("#toast");
@@ -64,10 +71,16 @@ async function loadCatalog() {
 function renderCatalog() {
   const model = state.catalog.models[0];
   $("#labelCloud").innerHTML = model.labels.map(label => `<span>${label}</span>`).join("");
+  $("#modelName").textContent = `${model.name} ${model.version}`;
+  $("#modelStatus").textContent = model.status === "BASELINE_VERIFIED" ? "稳定基线" : "待验证";
+  $("#modelStatus").classList.toggle("online", model.status === "BASELINE_VERIFIED");
+  $("#modelVerification").textContent = model.verification
+    ? `${model.verification} · ${model.verifiedAt}`
+    : "尚无真实工位验证记录";
   const releases = state.catalog.releases || [];
   const deployments = state.catalog.deployments || [];
   const latestRelease = releases.at(-1);
-  const activeDeployment = [...deployments].reverse().find(item => item.status === "ACTIVE");
+  const latestDeployment = deployments.at(-1);
   $("#releaseMetric").textContent = String(releases.length).padStart(2, "0");
   $("#releaseMetricText").textContent = latestRelease
     ? `${latestRelease.name} v${latestRelease.version}`
@@ -76,8 +89,8 @@ function renderCatalog() {
   $("#draftStatus").textContent = latestRelease
     ? `最新发布 v${latestRelease.version}`
     : "草稿 · 未发布";
-  $("#deploymentVersion").textContent = activeDeployment
-    ? `${activeDeployment.releaseId} · ACTIVE`
+  $("#deploymentVersion").textContent = latestDeployment
+    ? `${latestDeployment.releaseId} · ${latestDeployment.status}`
     : "尚未部署发布版本";
   renderFlow();
 }
@@ -148,7 +161,7 @@ async function deployLatestRelease() {
       })
     });
     await loadCatalog();
-    toast(`${latestRelease.releaseId} 已部署到 ${state.catalog.sop.stationId}`);
+    toast(`${latestRelease.releaseId} 已生成部署配置，等待 Worker 确认下发`);
   } catch (error) {
     toast(`部署失败：${error.message}`, true);
   }
@@ -271,11 +284,15 @@ function renderRuntime() {
 
   $("#runtimeSteps").innerHTML = steps.map((step, index) => {
     const status = step.stepStatus || step.judgeResult || "PENDING";
-    return `<div class="runtime-step ${statusClass(status)}"><span class="step-index">S${step.stepNo || index + 1}</span><div><b>${step.stepName || step.name}</b><small>${step.expectedEvent || step.event || "-"}</small></div><span class="step-state">${status}</span></div>`;
+    const event = step.expectedEvent || step.event || "-";
+    return `<div class="runtime-step ${statusClass(status)}"><span class="step-index">S${step.stepNo || index + 1}</span><div><b>${step.stepName || step.name}</b><small>${eventNames[event] || event}</small></div><span class="step-state">${status}</span></div>`;
   }).join("");
   $("#evidenceStrip").innerHTML = steps.map((step, index) => {
     const status = step.stepStatus || step.judgeResult || "PENDING";
-    return `<div class="evidence-tile ${statusClass(status)}"><b>S${step.stepNo || index + 1} · ${step.stepName || step.name}</b><span>${step.clipUrl ? "EVIDENCE READY" : status}</span></div>`;
+    const preview = step.snapshotUrl
+      ? `<img src="${step.snapshotUrl}" alt="S${step.stepNo || index + 1}动作证据">`
+      : `<div class="evidence-placeholder">S${step.stepNo || index + 1}</div>`;
+    return `<div class="evidence-tile ${statusClass(status)}">${preview}<b>S${step.stepNo || index + 1} · ${step.stepName || step.name}</b><span>${step.clipUrl ? "截图与视频已就绪" : status}</span></div>`;
   }).join("");
 
   const current = steps.find(step => statusClass(step.stepStatus || step.judgeResult) === "running")
@@ -294,7 +311,7 @@ function renderEvidence(steps, runtime) {
   $("#alarmMetric").textContent = runtime ? runtime.alarms.length : "--";
   $("#completedMetric").textContent = task && ["PASSED", "FINISHED"].includes(task.taskStatus) ? "01" : "--";
   $("#evidenceTable").innerHTML = steps.length ? steps.map((step, index) => `
-    <tr><td>S${step.stepNo || index + 1} · ${step.stepName || step.name}</td><td>${step.stepStatus || step.judgeResult || "PENDING"}</td><td>${step.judgeMessage || "等待该工序结果"}</td><td>${step.clipUrl ? `<a class="clip-link" href="${step.clipUrl}" target="_blank">查看动作片段 ↗</a>` : "暂无证据"}</td></tr>
+    <tr><td>S${step.stepNo || index + 1} · ${step.stepName || step.name}</td><td>${step.stepStatus || step.judgeResult || "PENDING"}</td><td>${step.judgeMessage || "等待该工序结果"}</td><td>${step.snapshotUrl ? `<a class="clip-link" href="${step.snapshotUrl}" target="_blank">查看截图</a>` : "暂无截图"}${step.clipUrl ? ` · <a class="clip-link" href="${step.clipUrl}" target="_blank">查看动作片段 ↗</a>` : ""}</td></tr>
   `).join("") : `<tr><td colspan="4" class="no-data">暂无任务与证据</td></tr>`;
 }
 

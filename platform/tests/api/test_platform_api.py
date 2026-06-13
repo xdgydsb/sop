@@ -99,7 +99,8 @@ class PlatformApiTests(unittest.TestCase):
         )
         self.assertEqual(201, deploy_response.status_code)
         deployment = deploy_response.get_json()["data"]
-        self.assertEqual("ACTIVE", deployment["status"])
+        self.assertEqual("STAGED", deployment["status"])
+        self.assertFalse(deployment["runtimeApplied"])
         self.assertEqual(release["releaseId"], deployment["releaseId"])
 
     def test_unknown_release_cannot_be_deployed(self) -> None:

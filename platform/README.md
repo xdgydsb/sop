@@ -60,6 +60,8 @@ The required browser product surface is defined in
 [Product UI](docs/PRODUCT_UI.md).
 The non-negotiable product direction derived from `参考.mp4` is recorded in
 [Reference Target](docs/REFERENCE_TARGET.md).
+The current truthful feature coverage and reuse decisions are recorded in
+[Current Capability Audit](docs/CURRENT_CAPABILITY_AUDIT_20260613.md).
 
 ## Current Verification
 

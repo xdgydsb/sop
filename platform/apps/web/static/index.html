@@ -110,8 +110,8 @@
         <div class="section-intro"><div><p class="eyebrow accent">DATA & MODEL REGISTRY</p><h2>数据、标签、训练与模型版本统一管理</h2></div><button class="primary muted" title="第二阶段实现">新建训练任务</button></div>
         <div class="model-overview">
           <article class="model-primary panel">
-            <div class="model-badge">V1</div><div><p class="eyebrow">PRODUCTION MODEL</p><h3>包装工序视觉模型</h3><p>目标检测、手物关系与时序规则的组合模型，服务首个真实包装工位。</p></div>
-            <span class="status-chip online">可运行</span>
+            <div class="model-badge">V1</div><div><p class="eyebrow">VERIFIED BASELINE</p><h3 id="modelName">包装工序视觉模型</h3><p id="modelVerification">读取模型验证状态</p></div>
+            <span class="status-chip online" id="modelStatus">读取中</span>
           </article>
           <article class="panel dataset-card"><p class="eyebrow">LABEL SET</p><div id="labelCloud" class="label-cloud"></div></article>
           <article class="panel pipeline-card"><p class="eyebrow">MODEL PIPELINE</p><div class="pipeline"><span>采集</span><i></i><span>标注</span><i></i><span>训练</span><i></i><span class="active">发布</span></div><small>AI辅助标注必须经过人工审核，模型发布保留版本和回滚能力。</small></article>
@@ -119,7 +119,7 @@
       </section>
 
       <section class="view" id="view-stations">
-        <div class="section-intro"><div><p class="eyebrow accent">EDGE & STATION</p><h2>工位、相机与算力节点保持版本一致</h2></div><div class="commands"><button class="secondary" id="stationRefresh">重新自检</button><button class="primary" id="deployButton">部署最新版本</button></div></div>
+        <div class="section-intro"><div><p class="eyebrow accent">EDGE & STATION</p><h2>工位、相机与算力节点保持版本一致</h2></div><div class="commands"><button class="secondary" id="stationRefresh">重新自检</button><button class="primary" id="deployButton">生成待下发部署</button></div></div>
         <div class="station-grid">
           <article class="station-card panel">
             <div class="station-visual"><span>ST-01</span><div class="scan-line"></div></div>
